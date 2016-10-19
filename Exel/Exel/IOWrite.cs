@@ -1,11 +1,12 @@
 ﻿using System;
 using InteropExel=Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 namespace Exel
 {
     public class IOWrite
     {
         private DataStruct data;
-        private InteropExel.Application exel;
+        private InteropExel.Application excel;
        public IOWrite(DataStruct ndata)
         {
             data = ndata;
@@ -15,26 +16,39 @@ namespace Exel
             try
             {
                 //podgotovka
-                exel =new  InteropExel.Application();
-                if (exel == null) return false;
-                exel.Visible = false;
+                excel =new  InteropExel.Application();
+                if (excel == null) return false;
+                excel.Visible = false;
 
-                InteropExel.Workbook workbook = exel.Workbooks.Add();
+                InteropExel.Workbook workbook = excel.Workbooks.Add();
                 if (workbook == null) return false;
 
                 InteropExel.Worksheet sheet = (InteropExel.Worksheet) workbook.Worksheets[1];
                 sheet.Name = "Table 1";
 
                 //filling of table
-
+                int i = 1;
+                addrow(new DataRow("First Name","Last Name","Age"),i++);
+                foreach(DataRow row in data.table)
+                {
+                    addrow(row, i++);
+                }
 
 
                 //memorise and close
                 workbook.SaveCopyAs(GetPath()); //memorise woorkbook
-                exel.DisplayAlerts = false; //exclude all alerts of Exel
+                excel.DisplayAlerts = false; //exclude all alerts of Exel
                 workbook.Close();
-                exel.Quit();
+                excel.Quit();
 
+                //Clear memory from excel !!!needed - using System.Runtime.InteropServices;
+                if (workbook != null) Marshal.ReleaseComObject(workbook);
+                if (sheet != null) Marshal.ReleaseComObject(sheet);
+                if (excel != null) Marshal.ReleaseComObject(excel);
+                workbook = null;
+                sheet = null;
+                excel = null;
+                GC.Collect();
 
                 return true;
             } catch { }
@@ -58,12 +72,21 @@ namespace Exel
         }
 
 
-        public void addrow(DataRow nrow)
+        public void addrow(DataRow ndataRow, int nindexRow)
         {
             try
-            {
+            {//zapis na 1 red
+                InteropExel.Range range;
+                range = excel.Range["A" + nindexRow.ToString(), "A" + nindexRow.ToString()];
+                range.Value2 = ndataRow.FirstName;
 
-            }catch { }
+                range = excel.Range["B" + nindexRow.ToString(), "B" + nindexRow.ToString()];
+                range.Value2 = ndataRow.LastName;
+
+                range = excel.Range["C" + nindexRow.ToString(), "C" + nindexRow.ToString()];
+                range.Value2 = ndataRow.Age;
+            }
+            catch { }
         }
     }
 }
