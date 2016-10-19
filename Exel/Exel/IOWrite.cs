@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using InteropExel=Microsoft.Office.Interop.Excel;
 namespace Exel
 {
     public class IOWrite
     {
         private DataStruct data;
+        private InteropExel.Application exel;
        public IOWrite(DataStruct ndata)
         {
             data = ndata;
