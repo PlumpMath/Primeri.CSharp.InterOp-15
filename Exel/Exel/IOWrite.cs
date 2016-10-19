@@ -14,7 +14,26 @@ namespace Exel
         {
             try
             {
-                //mejdinni proverki
+                //podgotovka
+                exel =new  InteropExel.Application();
+                if (exel == null) return false;
+                exel.Visible = false;
+
+                InteropExel.Workbook workbook = exel.Workbooks.Add();
+                if (workbook == null) return false;
+
+                InteropExel.Worksheet sheet = (InteropExel.Worksheet) workbook.Worksheets[1];
+                sheet.Name = "Table 1";
+
+                //filling of table
+
+
+
+                //memorise and close
+                workbook.SaveCopyAs(GetPath()); //memorise woorkbook
+                exel.DisplayAlerts = false; //exclude all alerts of Exel
+                workbook.Close();
+                exel.Quit();
 
 
                 return true;

@@ -19,6 +19,9 @@ namespace Exel
             data.AddRow("Angel", "Nestorov", "57");
 
             data.PrintTable();
+
+            write.ExportTable();
+            write.RunFile();
         }
     }
 }
