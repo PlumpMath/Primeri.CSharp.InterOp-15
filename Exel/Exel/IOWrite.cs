@@ -28,13 +28,16 @@ namespace Exel
 
                 //filling of table
                 int i = 1;
-                addrow(new DataRow("First Name","Last Name","Age"),i++);
-                foreach(DataRow row in data.table)
+                //Header of the table
+                addrow(new DataRow("First Name","Last Name","Age"),i++,true,8);i++;
+                //"i++;"ostava 1 prazen red
+                //true e za Bold, 8 e color from Excel color  palette 
+                foreach (DataRow row in data.table)
                 {
-                    addrow(row, i++);
+                    addrow(row, i++,false,-1); //false oznachava ne e Bold, -1 ozn. no color
                 }
 
-
+                i++; addrow(new DataRow("Number of rows", "",data.table.Count.ToString()), i++,true,-1); 
                 //memorise and close
                 workbook.SaveCopyAs(GetPath()); //memorise woorkbook
                 excel.DisplayAlerts = false; //exclude all alerts of Exel
@@ -72,11 +75,17 @@ namespace Exel
         }
 
 
-        public void addrow(DataRow ndataRow, int nindexRow)
+        public void addrow(DataRow ndataRow, int nindexRow, bool isBold, int color) //if it is true - Bold
         {
             try
             {//zapis na 1 red
                 InteropExel.Range range;
+                //Formating
+                range = excel.Range["A" + nindexRow.ToString(), "C" + nindexRow.ToString()];
+                if(color>0) range.Interior.ColorIndex = color; //do not coloor when is <0;Interior colored background 
+                if (isBold) range.Font.Bold = isBold;
+
+                //vavejdame dannite kletka po kletka
                 range = excel.Range["A" + nindexRow.ToString(), "A" + nindexRow.ToString()];
                 range.Value2 = ndataRow.FirstName;
 
